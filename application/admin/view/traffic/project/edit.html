@@ -1,0 +1,66 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('业务单位用户')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-YWDWYH" data-rule="required" class="form-control" type="text" disabled="true" name="row[YWDWYH]"  value="{$adminName}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('项目编号')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-XMBH" data-rule="required" class="form-control" name="row[XMBH]" type="text" value="{$row.XMBH|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('项目建设名称')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-XMJSMC" data-rule="required" class="form-control" name="row[XMJSMC]" type="text" value="{$row.XMJSMC|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('系统名称')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-XTMC" data-rule="required" class="form-control" name="row[XTMC]" type="text" value="{$row.XTMC|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('开发单位')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-KFDW" data-rule="required" class="form-control" name="row[KFDW]" type="text" value="{$row.KFDW|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('建设单位')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-JSDW" data-rule="required" class="form-control" name="row[JSDW]" type="text" value="{$row.JSDW|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('管理维护单位')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-GLWHDW" data-rule="required" class="form-control" name="row[GLWHDW]" type="text" value="{$row.GLWHDW|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('监理单位')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-JLDW" data-rule="required" class="form-control" name="row[JLDW]" type="text" value="{$row.JLDW|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="" class="control-label col-xs-12 col-sm-2">{:__('项目用户')}:</label>
+        <div class="col-xs-12 col-sm-8" data-toggle="cxselect" data-selects="c-XMYH" data-required="true">
+            <select class="c-XMYH form-control" name="row[XMYH]" data-url="traffic/project/getXmyhJson" data-value="{$row.XMYH}" ></select>
+        </div>
+    </div>
+
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
