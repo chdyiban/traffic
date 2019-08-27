@@ -1,0 +1,10 @@
+/thinkphp/
+/vendor/
+/runtime/
+/addons/*
+/public/assets/addons/*
+/public/uploads/*
+/public/template/*
+/public/install.php
+.user.ini
+

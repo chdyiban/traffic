@@ -1,0 +1,107 @@
+<input type="text" name="" class="hidden" id="ID" value="{$ID}">
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">文件上传</h3>
+    </div>
+    <!-- /.box-header -->
+    <!-- form start -->
+    <form id="fileForm" class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="c-SJZD" class="control-label col-xs-12 col-sm-2">{:__('数据字典')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <div class="input-group">
+                    <input id="c-SJZD" class="form-control" size="50" name="row[SJZD]" type="text" value="">
+                    <div class="input-group-addon no-border no-padding">
+                        <span><button type="button" id="plupload-SJZD" class="btn btn-danger plupload" data-input-id="c-SJZD" data-mimetype="*" data-multiple="true" data-preview-id="p-SJZD"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                        <!-- <span><button type="button" id="fachoose-image" class="btn btn-primary fachoose" data-input-id="c-image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span> -->
+                    </div>
+                    <span class="msg-box n-right" for="c-SJZD"></span>
+                </div>
+                <ul class="row list-inline plupload-preview" id="p-SJZD"></ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="c-database" class="control-label col-xs-12 col-sm-2">{:__('数据库内容文件')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <div class="input-group">
+                    <input id="c-database" class="form-control" size="50" name="row[database]" type="text" value="">
+                    <div class="input-group-addon no-border no-padding">
+                        <span><button type="button" id="plupload-database" class="btn btn-danger plupload" data-input-id="c-database" data-mimetype="*" data-multiple="true" data-preview-id="p-database"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                        <!-- <span><button type="button" id="fachoose-image" class="btn btn-primary fachoose" data-input-id="c-image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span> -->
+                    </div>
+                    <span class="msg-box n-right" for="c-database"></span>
+                </div>
+                <ul class="row list-inline plupload-preview" id="p-database"></ul>
+            </div>
+        </div>
+        <div class="row no-print">
+            <div class="col-xs-11">
+                <button type="button" class="btn btn-success btn-file-submit pull-right"><i class="fa fa-hand-paper-o"></i> 提交
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{notempty name="SJZD"}
+<div class="box box-warning">
+    <div class="box-header with-border">
+        <h3 class="box-title">资料下载</h3>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <p class="lead">数据字典文件</p>
+            <div class="table-responsive">
+                <table class="table">
+                <tbody><tr>
+                    <th style="width:50%">文件名</th>
+                    <td>下载地址</td>
+                </tr>
+                {foreach name="SJZD" item="vo" key="s" }
+                <tr>
+                    <th>文件{$s+1}</th>
+                    <td> <a href="{$vo}">点击下载</a></td>
+                </tr>
+                {/foreach}
+                </tbody></table>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <p class="lead">数据库内容文件</p>
+            <div class="table-responsive">
+                <table class="table">
+                <tbody><tr>
+                    <th style="width:50%">文件名</th>
+                    <td>下载地址</td>
+                </tr>
+                {foreach name="database" item="vo" key="s" }
+                <tr>
+                    <th>文件{$s+1}</th>
+                    <td> <a href="{$vo}">点击下载</a></td>
+                </tr>
+                {/foreach}
+                </tbody></table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <p class="lead">数据字典模板文件</p>
+            <div class="table-responsive">
+                <table class="table">
+                <tbody><tr>
+                    <th style="width:50%">文件名</th>
+                    <td>下载地址</td>
+                </tr>
+                <tr>
+                    <th>模板一:</th>
+                    <td> <a href="http://www.baidu.com">点击下载</a></td>
+                </tr>
+                </tbody></table>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+{/notempty}
