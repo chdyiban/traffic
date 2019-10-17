@@ -1,7 +1,7 @@
 <?php
 
 return array (
-  'name' => '易知数据',
+  'name' => '标准化管理系统',
   'beian' => '',
   'cdnurl' => '',
   'version' => '1.0.1',
