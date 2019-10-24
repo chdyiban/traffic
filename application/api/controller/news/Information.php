@@ -60,7 +60,7 @@ class Information extends Api
         //$list = ArchivesModel::getWeAppArchivesList($params);
         // $i = 1;
         foreach ($result["data"] as $key => &$value) {
-            $params["type"]    =  "sons";
+            // $params["type"]    =  "son";
             $params["channel"] =  $value["category"];
             $list = ArchivesModel::getArchivesList($params);
             $list = array_reverse($list,true);
