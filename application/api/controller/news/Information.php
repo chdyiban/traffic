@@ -45,7 +45,12 @@ class Information extends Api
             "code" => 0,
             "data" => [],
         ];
-
+        $widthArray = [
+            "标准发布"  =>  16,
+            "通知公告"  =>  8,
+            "评价公告"  =>  16,
+            "政策法规"  =>  8
+        ];
         $all = collection(Channel::order("weigh desc,id desc")->select())->toArray();
         foreach ($all as $k => $v) {
             if ($v["parent_id"] == 1) {
@@ -54,6 +59,7 @@ class Information extends Api
                     'category_name'  => $v['name'],
                     'category_url'   => $v['fullurl'],
                     "list"           => [],
+                    "width"          => !empty($widthArray[$v["name"]]) ? $widthArray[$v["name"]] : "",
                 ];
             }
         }
@@ -70,7 +76,6 @@ class Information extends Api
                         "id"     =>    $v["id"],
                         "title"  =>    $v["title"],
                         "date"   =>    date("Y-m-d",$v["createtime"]),
-                        // "url"    =>    $v["fullurl"],
                         "url"    =>    "/content/".$v["id"],
                         "image"  =>    $v["image"],
                     ];
