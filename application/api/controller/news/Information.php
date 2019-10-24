@@ -71,7 +71,7 @@ class Information extends Api
             $list = ArchivesModel::getArchivesList($params);
             $list = array_reverse($list,true);
             foreach ($list as $k => $v) {
-                if ($k < 5) {
+                if ($k < 8) {
                     $value["list"][] = [
                         "id"     =>    $v["id"],
                         "title"  =>    $v["title"],
@@ -127,8 +127,12 @@ class Information extends Api
                 "image"  =>    $v["image"],
             ];
         }
+
+        $archivesModel = new ArchivesModel;
+        $total = $archivesModel->where("channel_id",$channel)->count();
         //目前返回的是总条数，是否需要改为总页数
-        $result["data"]["total"] = count($list);
+        $result["data"]["total"] = $total;
+        $result["data"]["total_page"] = ceil($total/10);
         // dump($list);
         
         return json($result);
