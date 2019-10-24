@@ -63,15 +63,18 @@ class Information extends Api
             $params["type"]    =  "sons";
             $params["channel"] =  $value["category"];
             $list = ArchivesModel::getArchivesList($params);
+            $list = array_reverse($list,true);
             foreach ($list as $k => $v) {
-                $value["list"][] = [
-                    "id"     =>    $v["id"],
-                    "title"  =>    $v["title"],
-                    "date"   =>    date("Y-m-d",$v["createtime"]),
-                    // "url"    =>    $v["fullurl"],
-                    "url"    =>    "/content/".$v["id"],
-                    "image"  =>    $v["image"],
-                ];
+                if ($k < 5) {
+                    $value["list"][] = [
+                        "id"     =>    $v["id"],
+                        "title"  =>    $v["title"],
+                        "date"   =>    date("Y-m-d",$v["createtime"]),
+                        // "url"    =>    $v["fullurl"],
+                        "url"    =>    "/content/".$v["id"],
+                        "image"  =>    $v["image"],
+                    ];
+                }
             }
             // $value["category"] = $i;
             // $i++;
