@@ -233,9 +233,9 @@ class Bztx extends Model
             // "BZTXBH" => $data_list[$i][2],
             "stdID"  => "--------",
             "BZBH"   => "--------",
-            // "CKXQ"   => self::baseUrl.substr($data_list[$i][4],1),
+            "CKXQ"   => "--------",
             "BZMC"   => "此网站系统关闭，暂停服务",
-            // "YDJB"   => $data_list[$i][6],
+            "SFBRQ"  => "--------",
             "SSRQ"   => "--------",
             // "CYGX"   => $data_list[$i][8],
             // "DTBZH"  => $data_list[$i][9],
@@ -292,12 +292,13 @@ class Bztx extends Model
         
         for ($i = 0; $i < $len; $i++) { 
             $temp = [
-                // "BZTXBH" => $data_list[$i][2],
+                "XH" => $data_list[$i][1],
                 "BZBH"   => $data_list[$i][3],
-                "CKXQ"   => self::GBW_DETAIL_URL.$data_list[$i][2],
+                "CK"   => self::GBW_DETAIL_URL.$data_list[$i][2],
                 "BZMC"   => $data_list[$i][4],
                 // "YDJB"   => $data_list[$i][6],
-                "SSRQ"   => $data_list[$i][8],
+                "FBRQ"   => substr($data_list[$i][7],0,10),
+                "SSRQ"   => substr($data_list[$i][8],0,10),
                 // "CYGX"   => $data_list[$i][8],
                 // "DTBZH"  => $data_list[$i][9],
                 // "BZ"     => $data_list[$i][10],
