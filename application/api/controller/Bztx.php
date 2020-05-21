@@ -31,7 +31,7 @@ class Bztx extends Api
             case 'jtb':
                 $result = $BztxModel -> getJTB($param);
                 break;
-            case 'gbw':
+            case 'gb':
                 $result = $BztxModel -> getGBW($param);
                 break;
         }
