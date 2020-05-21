@@ -6,7 +6,7 @@ use think\Model;
 use fast\Http;
 use think\Db;
 
-class Bztx extends Model
+class Bztxback extends Model
 {
     // 表名
     protected $name = 'bztx_sx';
@@ -55,72 +55,50 @@ class Bztx extends Model
                 "Host: jtst.mot.gov.cn",
             )
         );
-        $html = curl_exec($ch); 
+        $html = curl_exec($ch);
+        $preg_list = '/<tr>.*?<td class="c">(.*?)<\/td>.*?<td>(.*?)<\/font><\/td>.*?<td class="c"><a.*?>(.*?)<\/a><\/td>.*?<td><a href="(.*?)" title="查看详细" target="_blank">(.*?)<\/a><\/td>.*?<td class="c">(.*?)<\/td>.*?<td class="c">(.*?)<\/td>.*?<td class="c">(.*?)<\/td>.*?<td class="c">(.*?)<\/td>.*?<td class="c">(.*?)<\/td>.*?<\/tr>/s';
+        $preg_all_page = '/<td>共: <span>(.*?)<\/span>页<\/td>/s';
+        $preg_all_count = '/<td>记录: <span>(.*?)<\/span><\/td>/s';
+        preg_match_all($preg_list, $html, $data_list,PREG_SET_ORDER);
+        preg_match_all($preg_all_page, $html, $all_page,PREG_SET_ORDER);
+        preg_match_all($preg_all_count, $html, $all_count,PREG_SET_ORDER);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        
-        
-
+        $all_page = $all_page[0][1];
+        $all_count = $all_count[0][1];
+        // dump($all_page);
         $return = [
             "code" => 0,
             "data" => [
                 "mocode"  => $mcode,
                 "bzcode"  => $bzcode,
                 "bzname"  => $bzname,
-                "rid"     => self::arch,
+                "rid"     => self::xtdrid,
                 "page"    => $page+1,
-                "allPage" => 1,
-                "total"   => 1,
+                "allPage" => (int)$all_page,
+                "total"   => (int)$all_count,
                 "list"    => [],
             ]
         ];
+        $len = count($data_list);
+        if ($len == 0) {
+            return $return;
+        }
         
-    
-        $temp = [
-            "BZTXBH" => "--------",
-            "BZBH"   => "--------",
-            "CKXQ"   => "--------",
-            "BZMC"   => "--------",
-            "YDJB"   => "--------",
-            "SSRQ"   => "--------",
-            "CYGX"   => "--------",
-            "DTBZH"  => "--------",
-            "BZ"     => "此网站系统关闭，暂停服务。",
-        ];
-        $return["data"]["list"][] = $temp;
-        
-        // $return = [
-        //     "code" => 0,
-        //     "data" => [
-        //         "mocode"  => $mcode,
-        //         "bzcode"  => $bzcode,
-        //         "bzname"  => $bzname,
-        //         "rid"     => self::xtdrid,
-        //         "page"    => $page+1,
-        //         "allPage" => (int)$all_page,
-        //         "total"   => (int)$all_count,
-        //         "list"    => [],
-        //     ]
-        // ];
-        // $len = count($data_list);
-        // if ($len == 0) {
-        //     return $return;
-        // }
-        
-        // for ($i = 0; $i < $len; $i++) { 
-        //     $temp = [
-        //         "BZTXBH" => $data_list[$i][2],
-        //         "BZBH"   => $data_list[$i][3],
-        //         "CKXQ"   => self::baseUrl.substr($data_list[$i][4],1),
-        //         "BZMC"   => $data_list[$i][5],
-        //         "YDJB"   => $data_list[$i][6],
-        //         "SSRQ"   => $data_list[$i][7],
-        //         "CYGX"   => $data_list[$i][8],
-        //         "DTBZH"  => $data_list[$i][9],
-        //         "BZ"     => $data_list[$i][10],
-        //     ];
-        //     $return["data"]["list"][] = $temp;
-        // }
+        for ($i = 0; $i < $len; $i++) { 
+            $temp = [
+                "BZTXBH" => $data_list[$i][2],
+                "BZBH"   => $data_list[$i][3],
+                "CKXQ"   => self::baseUrl.substr($data_list[$i][4],1),
+                "BZMC"   => $data_list[$i][5],
+                "YDJB"   => $data_list[$i][6],
+                "SSRQ"   => $data_list[$i][7],
+                "CYGX"   => $data_list[$i][8],
+                "DTBZH"  => $data_list[$i][9],
+                "BZ"     => $data_list[$i][10],
+            ];
+            $return["data"]["list"][] = $temp;
+        }
         return $return;
     }
 
@@ -215,6 +193,16 @@ class Bztx extends Model
         $postData = http_build_query($dataArray);
 		$html = Http::post($url,$postData);
 
+        $preg_list = '/<tr class=".*?">.*?<td align="center">.*?<\/td>.*?<td><a href=".*?" onclick="javascript:doOpenView\(\'(.*?)\'\);" >(.*?)<\/a><\/td>.*?<td>(.*?)<\/td>.*?<td align="center">(.*?)<\/td>.*?<td align="center">(.*?)<\/td>.*?<td align="center"><a style=".*?" href=".*?" onclick=".*?" >.*?<\/a><\/td>.*?<\/tr>/s';
+        $preg_all_page = '/<td>共: <span>(.*?)<\/span>页<\/td>/s';
+        $preg_all_count = '/<td>记录: <span>(.*?)<\/span><\/td>/s';
+        preg_match_all($preg_list, $html, $data_list,PREG_SET_ORDER);
+        preg_match_all($preg_all_page, $html, $all_page,PREG_SET_ORDER);
+        preg_match_all($preg_all_count, $html, $all_count,PREG_SET_ORDER);
+        // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // curl_close($ch);
+        $all_page = $all_page[0][1];
+        $all_count = $all_count[0][1];
         $return = [
             "code" => 0,
             "data" => [
@@ -223,26 +211,32 @@ class Bztx extends Model
                 // "bzcode"  => "",
                 "bzname"  => $bzname,
                 "page"    => $page,
-                "allPage" => (int)1,
-                "total"   => (int)1,
+                "allPage" => (int)$all_page,
+                "total"   => (int)$all_count,
                 "list"    => [],
             ]
         ];
 
-        $temp = [
-            // "BZTXBH" => $data_list[$i][2],
-            "stdID"  => "--------",
-            "BZBH"   => "--------",
-            // "CKXQ"   => self::baseUrl.substr($data_list[$i][4],1),
-            "BZMC"   => "此网站系统关闭，暂停服务",
-            // "YDJB"   => $data_list[$i][6],
-            "SSRQ"   => "--------",
-            // "CYGX"   => $data_list[$i][8],
-            // "DTBZH"  => $data_list[$i][9],
-            // "BZ"     => $data_list[$i][10],
-        ];
-        $return["data"]["list"][] = $temp;
-       
+        $len = count($data_list);
+        if ($len == 0) {
+            return $return;
+        }
+        // dump($data_list);
+        for ($i = 0; $i < $len; $i++) { 
+            $temp = [
+                // "BZTXBH" => $data_list[$i][2],
+                "stdID"  => $data_list[$i][1],
+                "BZBH"   => $data_list[$i][2],
+                // "CKXQ"   => self::baseUrl.substr($data_list[$i][4],1),
+                "BZMC"   => $data_list[$i][3],
+                // "YDJB"   => $data_list[$i][6],
+                "SSRQ"   => $data_list[$i][5],
+                // "CYGX"   => $data_list[$i][8],
+                // "DTBZH"  => $data_list[$i][9],
+                // "BZ"     => $data_list[$i][10],
+            ];
+            $return["data"]["list"][] = $temp;
+        }
         return $return;
     }
 
