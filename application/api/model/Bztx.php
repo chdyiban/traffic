@@ -10,7 +10,7 @@ class Bztx extends Model
 {
     // 表名
     protected $name = 'bztx_sx';
-    const getXtdUrl = "http://jtst.mot.gov.cn/search/archPage1";
+    const getXtdUrl = "http://jtst.mot.gov.cn/search/archPage";
     const arch    = "17377f1d7f6409d3dc482dabe859d8d9";
     //用来查看体系内的文章
     const baseUrl   = "http://jtst.mot.gov.cn/gb/search/gbDetailed?id="; 
@@ -46,7 +46,7 @@ class Bztx extends Model
         $data  = Http::get($url,$dataArray);
 
         $resultData = json_decode($data,true);
-
+        dump($resultData);
         if (isset($resultData["error"]) || !isset($resultData["rows"]) ) {
               $return = [
                     "code" => 0,
@@ -59,15 +59,17 @@ class Bztx extends Model
                         "allPage" => 1,
                         "total"   => 1,
                         "list"    => [
-                            "BZTXBH" => "------",
-                            "BZBH"   => "------",
-                            "CKXQ"   => "------",
-                            "BZMC"   => "查询网站关闭，服务暂停使用！",
-                            "YDJB"   => "------",
-                            "SSRQ"   => "------",
-                            "CYGX"   => "------",
-                            "DTBZH"  => "------",
-                            "BZ"     => "------",
+                            [
+                                "BZTXBH" => "------",
+                                "BZBH"   => "------",
+                                "CKXQ"   => "------",
+                                "BZMC"   => "查询网站关闭，服务暂停使用！",
+                                "YDJB"   => "------",
+                                "SSRQ"   => "------",
+                                "CYGX"   => "------",
+                                "DTBZH"  => "------",
+                                "BZ"     => "------",
+                            ],
                         ],
                     ]
                 ];
@@ -221,13 +223,15 @@ class Bztx extends Model
                     "allPage" => 1,
                     "total"   => 1,
                     "list"    => [
-                        "stdID"  => 1,
-                        "BZBH"   => "------",
-                        "CKXQ"   => "------",
-                        "BZMC"   =>"查询网站关闭，服务暂停使用！",
-                        "FBRQ"  => "------",
-                        "SSRQ"   => "------",
-                        "CK"     => "------",
+                        [
+                            "stdID"  => 1,
+                            "BZBH"   => "------",
+                            "CKXQ"   => "------",
+                            "BZMC"   =>"查询网站关闭，服务暂停使用！",
+                            "FBRQ"  => "------",
+                            "SSRQ"   => "------",
+                            "CK"     => "------",
+                        ],
                     ],
                 ]
             ];
