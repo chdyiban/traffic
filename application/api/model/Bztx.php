@@ -46,7 +46,7 @@ class Bztx extends Model
         $data  = Http::get($url,$dataArray);
 
         $resultData = json_decode($data,true);
-        dump($resultData);
+        
         if (isset($resultData["error"]) || !isset($resultData["rows"]) ) {
               $return = [
                     "code" => 0,
