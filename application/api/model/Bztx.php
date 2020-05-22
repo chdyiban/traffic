@@ -10,11 +10,12 @@ class Bztx extends Model
 {
     // 表名
     protected $name = 'bztx_sx';
-    const getXtdUrl = "http://jtst.mot.gov.cn/search/archPage";
+    const getXtdUrl = "http://jtst.mot.gov.cn/search/archPage1";
     const arch    = "17377f1d7f6409d3dc482dabe859d8d9";
-    const baseUrl   = "http://jtst.mot.gov.cn/eap"; 
+    //用来查看体系内的文章
+    const baseUrl   = "http://jtst.mot.gov.cn/gb/search/gbDetailed?id="; 
 
-    const getJtbUrl = "http://jtst.mot.gov.cn/eap/BzAction.do";
+    const getJtbUrl = "http://jtst.mot.gov.cn/gb/search/gbAdvancedSearchPage";
     const getGbwUrl = "http://openstd.samr.gov.cn/bzgk/gb/std_list";
     const GBW_DETAIL_URL = "http://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=";
 
@@ -27,7 +28,7 @@ class Bztx extends Model
         $bzname = isset($param["bzname"]) ? $param["bzname"] : "";
         $page = isset($param["page"]) ? $param["page"]: 1;
         $pageSize = isset($param["pageSize"]) ? $param["pageSize"]: 10;
-        $page = (int)$page-1;
+        $page = (int)$page;
         // dump($page);
         $url = self::getXtdUrl;
         $dataArray = [
@@ -37,30 +38,47 @@ class Bztx extends Model
             "pageNumber"    => (int)$page,
             "pageSize"      => (int)$pageSize,
             "arch"           => self::arch,
+            "level"         => 2,
+            "sortOrder"     =>  "asc",
         ];
         // dump($dataArray);
         $postData = http_build_query($dataArray);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Referer : http://jtst.mot.gov.cn/eap/BzTxAction.do?act=listHome',
-                'User-Agent : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
-                'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
-                'Origin: http://jtst.mot.gov.cn',
-                "Accept-Encoding: gzip, deflate",
-                "Accept-Language: zh-CN,zh;q=0.9",
-                "Host: jtst.mot.gov.cn",
-            )
-        );
-        $html = curl_exec($ch); 
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        
+        $data  = Http::get($url,$dataArray);
 
+        $resultData = json_decode($data,true);
+
+        if (isset($resultData["error"]) || !isset($resultData["rows"]) ) {
+              $return = [
+                    "code" => 0,
+                    "data" => [
+                        "mocode"  => $mcode,
+                        "bzcode"  => $bzcode,
+                        "bzname"  => $bzname,
+                        "rid"     => self::arch,
+                        "page"    => 1,
+                        "allPage" => 1,
+                        "total"   => 1,
+                        "list"    => [
+                            "BZTXBH" => "------",
+                            "BZBH"   => "------",
+                            "CKXQ"   => "------",
+                            "BZMC"   => "查询网站关闭，服务暂停使用！",
+                            "YDJB"   => "------",
+                            "SSRQ"   => "------",
+                            "CYGX"   => "------",
+                            "DTBZH"  => "------",
+                            "BZ"     => "------",
+                        ],
+                    ]
+                ];
+                return $return;
+            
+        }
+
+        $allPage = 0;
+        if (!empty($resultData["total"])) {
+            $allPage = ceil((int)$resultData["total"]/(int)$pageSize);
+        }
         $return = [
             "code" => 0,
             "data" => [
@@ -68,59 +86,27 @@ class Bztx extends Model
                 "bzcode"  => $bzcode,
                 "bzname"  => $bzname,
                 "rid"     => self::arch,
-                "page"    => $page+1,
-                "allPage" => 1,
-                "total"   => 1,
+                "page"    => $page,
+                "allPage" => $allPage,
+                "total"   => isset($resultData["total"]) ? $resultData["total"] : 0,
                 "list"    => [],
             ]
         ];
-        
-    
-        $temp = [
-            "BZTXBH" => "--------",
-            "BZBH"   => "--------",
-            "CKXQ"   => "--------",
-            "BZMC"   => "--------",
-            "YDJB"   => "--------",
-            "SSRQ"   => "--------",
-            "CYGX"   => "--------",
-            "DTBZH"  => "--------",
-            "BZ"     => "此网站系统关闭，暂停服务。",
-        ];
-        $return["data"]["list"][] = $temp;
-        
-        // $return = [
-        //     "code" => 0,
-        //     "data" => [
-        //         "mocode"  => $mcode,
-        //         "bzcode"  => $bzcode,
-        //         "bzname"  => $bzname,
-        //         "rid"     => self::xtdrid,
-        //         "page"    => $page+1,
-        //         "allPage" => (int)$all_page,
-        //         "total"   => (int)$all_count,
-        //         "list"    => [],
-        //     ]
-        // ];
-        // $len = count($data_list);
-        // if ($len == 0) {
-        //     return $return;
-        // }
-        
-        // for ($i = 0; $i < $len; $i++) { 
-        //     $temp = [
-        //         "BZTXBH" => $data_list[$i][2],
-        //         "BZBH"   => $data_list[$i][3],
-        //         "CKXQ"   => self::baseUrl.substr($data_list[$i][4],1),
-        //         "BZMC"   => $data_list[$i][5],
-        //         "YDJB"   => $data_list[$i][6],
-        //         "SSRQ"   => $data_list[$i][7],
-        //         "CYGX"   => $data_list[$i][8],
-        //         "DTBZH"  => $data_list[$i][9],
-        //         "BZ"     => $data_list[$i][10],
-        //     ];
-        //     $return["data"]["list"][] = $temp;
-        // }
+
+        foreach ($resultData["rows"] as $k => $v) {
+            $temp = [
+                "BZTXBH" => $v["CODE1"].".".$v["CODE2"].".".$v["CODE3"],
+                "BZBH"   => $v["STD_CODE"],
+                "CKXQ"   => "",
+                "BZMC"   => $v["STD_NAME"],
+                "YDJB"   => "",
+                "SSRQ"   => $v["ACT_DATE"],
+                "CYGX"   => "",
+                "DTBZH"  => "",
+                "BZ"     => self::baseUrl.$v["DETAIL_ID"],
+            ];
+            $return["data"]["list"][] = $temp;
+        }
         return $return;
     }
 
@@ -175,46 +161,84 @@ class Bztx extends Model
     public function getJTB($param)
     {
         
-        // $mcode = isset($param["mcode"]) ? $param["bzcode"] : "";
-        // $bzcode = isset($param["bzcode"]) ? $param["bzcode"] : "";
         $bzname = isset($param["bzname"]) ? $param["bzname"] : "";
         $page = isset($param["page"]) ? $param["page"]: 1;
         $page = (int)$page;
-        $is_new = $page == 1 ? 1 : "";
+        // $is_new = $page == 1 ? 1 : "";
         $url = self::getJtbUrl;
         $dataArray = [
-            // "mcode"  => (int)$mcode,
-            // "S_BZBH"  => $bzcode,
-            "S_BZBH"  => "",
-            "S_ZWMC"  => $bzname, 
-            "S_FBRQS" => "", 
-            "S_FBRQE" => "", 
-            "S_SSRQS" => "", 
-            "S_SSRQE" => "", 
-            "S_GKDW"  => "", 
-            "S_YWMC"  => "", 
-            "S_QCDW"  => "", 
-            "S_QCR"   => "", 
-            "S_BZXZ"  => "", 
-            "S_BZJB"  => "", 
-            "S_ISABO" => 0,
-            "S_GRP"   => "", 
-            "treeid"  => 0,
-            "order"   => 1,
-            "order_style" =>"asc",
-            "is_new"  => $is_new,
-            "act"     => "search",
-            "stdID"   => "", 
-            "interval" => 20,
-            "pageNo"   => $page-1,
-            "total"   => "",
-            "totalPage"=> "",
-            "thisPageCounts"=> "",
+            "tid" => 5,
+            "std_p1"=> "",
+            "std_p2"=> "",
+            "std_p3"=> "", 
+            "std_p34"=> "", 
+            "std_p4"=> "", 
+            "std_p5"=> "", 
+            "std_p22"=> "", 
+            "std_p23"=> "", 
+            "std_p35"=> "", 
+            "std_p38"=> "", 
+            "std_p39"=> "", 
+            "std_p36"=> "", 
+            "std_p37"=> "", 
+            "std_p32"=> "", 
+            "std_p33"=> "", 
+            "std_p29"=> "", 
+            "std_p30"=> "", 
+            "std_p31"=> "", 
+            "std_p6_1"=> "", 
+            "std_p6_2"=> "", 
+            "std_p7"=> "", 
+            "std_p16"=> "", 
+            "std_p27"=> "", 
+            "std_p18"=> "", 
+            "std_p28"=> "", 
+            "std_p8"=>  $bzname, 
+            "std_p9"=> "", 
+            "std_p10"=> "", 
+            "std_p11"=> "", 
+            "std_p12"=> "", 
+            "std_p13"=> "", 
+            "std_p14"=> "", 
+            "std_p15"=> "", 
+            "std_p19"=> "", 
+            "std_p20"=> "", 
+            "std_p21"=> "", 
+            "sortOrder"=> "asc", 
+            "pageSize"=> "10",
+            "pageNumber"=> $page, 
         ];
 
-        $postData = http_build_query($dataArray);
-		$html = Http::post($url,$postData);
+		$html = Http::get($url,$dataArray);
+        $resultData = json_decode($html,true);
+        //若查询网站关闭
+        if (isset($resultData["error"]) || !isset($resultData["rows"]) ) {
+            $return = [
+                "code" => 0,
+                "data" => [
+                    "bzname"  => $bzname,
+                    "page"    => 1,
+                    "allPage" => 1,
+                    "total"   => 1,
+                    "list"    => [
+                        "stdID"  => 1,
+                        "BZBH"   => "------",
+                        "CKXQ"   => "------",
+                        "BZMC"   =>"查询网站关闭，服务暂停使用！",
+                        "FBRQ"  => "------",
+                        "SSRQ"   => "------",
+                        "CK"     => "------",
+                    ],
+                ]
+            ];
+            return $return;
+          
+      }
 
+        $allPage = 0;
+        if (!empty($resultData["total"])) {
+            $allPage = ceil((int)$resultData["total"]/(int)$page);
+        }
         $return = [
             "code" => 0,
             "data" => [
@@ -223,26 +247,25 @@ class Bztx extends Model
                 // "bzcode"  => "",
                 "bzname"  => $bzname,
                 "page"    => $page,
-                "allPage" => (int)1,
-                "total"   => (int)1,
+                "allPage" => (int)$allPage,
+                "total"   => (int)$resultData["total"],
                 "list"    => [],
             ]
         ];
-
-        $temp = [
-            // "BZTXBH" => $data_list[$i][2],
-            "stdID"  => "--------",
-            "BZBH"   => "--------",
-            "CKXQ"   => "--------",
-            "BZMC"   => "此网站系统关闭，暂停服务",
-            "FBRQ"  => "--------",
-            "SSRQ"   => "--------",
-            "CK"     => "--------",
-            // "CYGX"   => $data_list[$i][8],
-            // "DTBZH"  => $data_list[$i][9],
-            // "BZ"     => $data_list[$i][10],
-        ];
-        $return["data"]["list"][] = $temp;
+        $i = 1;
+        foreach ($resultData["rows"] as $k => $v) {
+            $temp = [
+                "stdID"  => $i,
+                "BZBH"   => $v["STD_CODE"],
+                "CKXQ"   => "",
+                "BZMC"   => $v["C_NAME"],
+                "FBRQ"  => $v["ISSUE_DATE"],
+                "SSRQ"   => $v["ACT_DATE"],
+                "CK"     => self::baseUrl.$v['id'],
+            ];
+            $i++;
+            $return["data"]["list"][] = $temp;
+        }
        
         return $return;
     }
